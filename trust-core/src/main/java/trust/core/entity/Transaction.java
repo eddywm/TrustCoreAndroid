@@ -5,6 +5,8 @@ import android.os.Parcelable;
 
 import java.math.BigInteger;
 
+import trust.core.entity.address.Address;
+
 public class Transaction implements Parcelable {
     public final Address recipient;
     public final Address contract;
