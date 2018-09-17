@@ -1,6 +1,7 @@
 package trust.core.blockchain;
 
 import trust.core.blockchain.address.AddressFactory;
+import trust.core.blockchain.address.EthereumAddressFactory;
 import trust.core.entity.Node;
 import trust.core.entity.Unit;
 import trust.core.entity.address.Address;
@@ -14,12 +15,12 @@ import static trust.core.entity.Node.VET_NODE;
 
 public enum Slip44 {
 
-    ETH(60, "Ethereum", "ETH", 18, 1, null, ETH_NODE),
-    CLO(820, "Ethereum Classic", "CLO", 18, 820, null, ETC_NODE),
-    GO(6060,"Callisto", "GO", 18, 60, null, CLO_NODE),
-    ETC(61, "GoChain", "ETC", 18, 61, null, GO_NODE),
-    POA(178, "POA Network", "POA", 18, 99, null, POA_NODE),
-    VET(818, "VeChain", "VET", 18, 39, null, VET_NODE);
+    ETH(60, "Ethereum", "ETH", 18, 1, EthereumAddressFactory.INSTANCE, ETH_NODE),
+    CLO(820, "Ethereum Classic", "CLO", 18, 820, EthereumAddressFactory.INSTANCE, ETC_NODE),
+    GO(6060,"Callisto", "GO", 18, 60, EthereumAddressFactory.INSTANCE, CLO_NODE),
+    ETC(61, "GoChain", "ETC", 18, 61, EthereumAddressFactory.INSTANCE, GO_NODE),
+    POA(178, "POA Network", "POA", 18, 99, EthereumAddressFactory.INSTANCE, POA_NODE),
+    VET(818, "VeChain", "VET", 18, 39, EthereumAddressFactory.INSTANCE, VET_NODE);
 
     private final int coin;
     private final String name;
