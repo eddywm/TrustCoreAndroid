@@ -67,9 +67,7 @@ public class MnemonicAdapter implements WalletAdapter {
         return getKeyChain(mnemonic)
                 .flatMapObservable(keyChain -> generateAccounts(keyChain, coins))
                 .toList()
-                .map(accounts -> {
-                    return accounts.toArray(new Account[accounts.size()]);
-                })
+                .map(accounts -> accounts.toArray(new Account[accounts.size()]))
                 .map(accounts -> new WalletDescriptor(mnemonic.getBytes("UTF-8"), accounts));
     }
 
