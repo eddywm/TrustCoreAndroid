@@ -16,29 +16,29 @@ import trust.core.util.Base58Check;
 public class ZcashAccountFactory implements AccountFactory {
 
     public ECKey ecKey;
-
-    public String passphrase; // Will be used to store the private key encrypted
+    public String privateKey;
+    public String publicKey;
 
     public ZcashAccountFactory() {
         if (ecKey == null) {
             ecKey = new ECKey(new SecureRandom());
+            privateKey = ecKey.getPrivateKeyAsHex();
+            publicKey = ecKey.getPublicKeyAsHex();
         }
     }
 
     @Override
     public Observable<Account> createAccount(ECKey keyChain, Slip44 coin) {
         return Observable.fromCallable(() -> {
-
             String address = getZcashAddress(keyChain);
-
-            // TODO: Before returning save also keys on disk
-
             return new Account(new ZcashAddress(address), coin);
         });
     }
 
-    // P2PKH Zcash t-address.
-    //  Base58Check([0x1C, 0xB8] || RIPEMD-160(SHA-256(PUBKEY)))
+    /*
+     Address format : P2PKH Zcash t-address.
+     Base58Check([0x1C, 0xB8] || RIPEMD-160(SHA-256(PUBKEY)))
+    */
     public String getZcashAddress(ECKey keyChain) throws IOException {
 
         ByteArrayOutputStream output = new ByteArrayOutputStream();

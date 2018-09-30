@@ -19,7 +19,4 @@ class ZcashAdressTests {
         assertEquals(false, isValidZcashAddress)
 
     }
-
 }
-
-// 4c022acf30183b09d02a56632396c23228b018ba // 3byVgGCJUHZBhCb9W7nZiqR5ALp3pJkS4HiEfnUd58RoRd6to3tiHUk

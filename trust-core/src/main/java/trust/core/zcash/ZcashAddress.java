@@ -40,10 +40,10 @@ public class ZcashAddress extends PlainAddress {
         return super.value();
     }
 
-    // Return the hex value of the address
+    // Zcash does not use 0x type addresses
     @Override
     public String hexValue() {
-        return super.hexValue();
+       return  null;
     }
 
 
