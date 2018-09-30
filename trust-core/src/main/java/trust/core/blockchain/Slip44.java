@@ -24,7 +24,7 @@ public enum Slip44 {
     POA(178, "POA Network", "POA", 18, 99, EthereumAddressFactory.INSTANCE, POA_NODE),
     VET(818, "VeChain", "VET", 18, 39, EthereumAddressFactory.INSTANCE, VET_NODE),
 
-    ZEC(133, "Zcash", "ZEC", 18, 2, ZcashAddressFactory.INSTANCE, ZEC_NODE);
+    ZEC(133, "Zcash", "ZEC", 18, 2, ZcashAddressFactory.Companion.getINSTANCE(), ZEC_NODE);
 
     private final int coin;
     private final String name;

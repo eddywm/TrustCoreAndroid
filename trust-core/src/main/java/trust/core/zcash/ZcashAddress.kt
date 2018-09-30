@@ -8,10 +8,12 @@ import trust.core.entity.address.PlainAddress
 import java.util.regex.Pattern
 
 
-// The type of Zcash address that this implementation supports are the t type address or vanity address
-// Note : Zcash does not yet support Hierarchical Deterministic Wallet addresses [BIP-32].
-// This implies that the notion of account and derivation path won't be applied for this Zcash integration
-// E.g: t1ShwyK2o1Pj2qTpz33tqG8aEMszcxxmax8
+/**
+* The type of Zcash address that this implementation supports are the t type address or vanity address
+* Note : Zcash does not yet support Hierarchical Deterministic Wallet addresses [BIP-32].
+* This implies that the notion of account and derivation path won't be applied for this Zcash integration
+* E.g: t1ShwyK2o1Pj2qTpz33tqG8aEMszcxxmax8
+*/
 open class ZcashAddress : PlainAddress {
 
     var CREATOR: Parcelable.Creator<ZcashAddress> = object : Parcelable.Creator<ZcashAddress> {
