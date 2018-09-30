@@ -19,6 +19,7 @@ public class ZcashAddress extends PlainAddress {
 
     private static final Pattern tAddressPattern = Pattern.compile("^t[1-9A-HJ-NP-Za-km-z]{34}");
 
+
     public ZcashAddress(String value) {
         super(value);
     }
@@ -31,6 +32,20 @@ public class ZcashAddress extends PlainAddress {
     public static boolean isAddress(String address) {
         return !TextUtils.isEmpty(address) && address.length() == 35 && tAddressPattern.matcher(address).matches();
     }
+
+
+    // Return the Base58 Encoded t-address
+    @Override
+    public String value() {
+        return super.value();
+    }
+
+    // Return the hex value of the address
+    @Override
+    public String hexValue() {
+        return super.hexValue();
+    }
+
 
     public Parcelable.Creator<ZcashAddress> CREATOR = new Parcelable.Creator<ZcashAddress>() {
         @Override
