@@ -5,6 +5,7 @@ import trust.core.blockchain.address.EthereumAddressFactory;
 import trust.core.entity.Node;
 import trust.core.entity.Unit;
 import trust.core.entity.address.Address;
+import trust.core.zcash.ZcashAddressFactory;
 
 import static trust.core.entity.Node.CLO_NODE;
 import static trust.core.entity.Node.ETC_NODE;
@@ -12,15 +13,18 @@ import static trust.core.entity.Node.ETH_NODE;
 import static trust.core.entity.Node.GO_NODE;
 import static trust.core.entity.Node.POA_NODE;
 import static trust.core.entity.Node.VET_NODE;
+import static trust.core.entity.Node.ZEC_NODE;
 
 public enum Slip44 {
 
     ETH(60, "Ethereum", "ETH", 18, 1, EthereumAddressFactory.INSTANCE, ETH_NODE),
     CLO(820, "Ethereum Classic", "CLO", 18, 820, EthereumAddressFactory.INSTANCE, ETC_NODE),
-    GO(6060,"Callisto", "GO", 18, 60, EthereumAddressFactory.INSTANCE, CLO_NODE),
+    GO(6060, "Callisto", "GO", 18, 60, EthereumAddressFactory.INSTANCE, CLO_NODE),
     ETC(61, "GoChain", "ETC", 18, 61, EthereumAddressFactory.INSTANCE, GO_NODE),
     POA(178, "POA Network", "POA", 18, 99, EthereumAddressFactory.INSTANCE, POA_NODE),
-    VET(818, "VeChain", "VET", 18, 39, EthereumAddressFactory.INSTANCE, VET_NODE);
+    VET(818, "VeChain", "VET", 18, 39, EthereumAddressFactory.INSTANCE, VET_NODE),
+
+    ZEC(133, "Zcash", "ZEC", 18, 2, ZcashAddressFactory.INSTANCE, ZEC_NODE);
 
     private final int coin;
     private final String name;

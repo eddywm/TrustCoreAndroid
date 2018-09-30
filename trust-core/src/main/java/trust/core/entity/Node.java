@@ -33,13 +33,19 @@ public class Node implements Parcelable {
             "0x0000000000000000000000000000000000000332",
             "vechain");
 
+    public static final Node ZEC_NODE = new Node("https://zec-rpc.binancechain.io",
+            "https://poaexplorer.com/txid/search/",
+            "0x0000000000000000000000000000000000000123",
+            "zec");
+
     public static final Node[] NODES = new Node[] {
             ETH_NODE,
             ETC_NODE,
             POA_NODE,
             CLO_NODE,
             GO_NODE,
-            VET_NODE
+            VET_NODE,
+            ZEC_NODE,
     };
 
     public final String rpcUri;

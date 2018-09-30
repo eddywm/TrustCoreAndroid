@@ -7,18 +7,21 @@ public class ZcashAddressFactory implements AddressFactory {
 
     public static final AddressFactory INSTANCE = new ZcashAddressFactory();
 
+
     @Override
     public Address create(String address) {
-        return null;
+        return new ZcashAddress(address);
     }
 
     @Override
     public boolean validate(String address) {
-        return false;
+        return ZcashAddress.isAddress(address);
     }
 
     @Override
     public Address empty() {
-        return null;
+        return ZcashAddress.EMPTY;
     }
+
+
 }
