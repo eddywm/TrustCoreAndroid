@@ -9,9 +9,9 @@ class ZcashAccountTests {
 
     @Test
     fun test_account_creation() {
-        val accountFactory: ZcashAccountFactory = ZcashAccountFactory()
-        val ecKey = accountFactory.ecKey
-        val acc = accountFactory.createAccount(ecKey!!, Slip44.ZEC).blockingFirst()
+        val accountFactory = ZcashAccountFactory()
+        val ecKey = accountFactory.ecKey!!
+        val acc = accountFactory.createAccount(ecKey, Slip44.ZEC).blockingFirst()
 
 
         assertNotNull(accountFactory.privateKey)
