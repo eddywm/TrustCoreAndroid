@@ -5,7 +5,6 @@ import trust.core.entity.address.Address
 
 class ZcashAddressFactory : AddressFactory {
 
-
     override fun create(address: String): Address {
         return ZcashAddress(address)
     }

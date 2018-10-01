@@ -33,8 +33,8 @@ public class Node implements Parcelable {
             "0x0000000000000000000000000000000000000332",
             "vechain");
 
-    public static final Node ZEC_NODE = new Node("https://zec-rpc.binancechain.io",
-            "https://poaexplorer.com/txid/search/",
+    public static final Node ZEC_NODE = new Node("https://chain.so/api/v2/get_info/ZEC",
+            "https://chain.so/tx/ZEC/",
             "0x0000000000000000000000000000000000000123",
             "zec");
 

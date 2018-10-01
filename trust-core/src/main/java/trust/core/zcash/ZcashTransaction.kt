@@ -1,6 +1,5 @@
 package trust.core.zcash
 
-import trust.core.util.Hex
 import trust.core.zcash.ZcashUtil.BLAKE2B
 import java.io.ByteArrayOutputStream
 import java.nio.charset.StandardCharsets
@@ -9,9 +8,8 @@ data class ZcashTransaction(
         var shielded: Boolean = false,
         var overwintered: Boolean = true,
         var nLockTime: Long = 0L,
-        var transactionHash: String = String(),
-        var transactionInputs: List<TransactionInput> = emptyList(),
-        var transactionOutputs: List<TransactionOutput> = emptyList()
+        var inputs: List<TransactionInput> = emptyList(),
+        var outputs: List<TransactionOutput> = emptyList()
 
 
 ) {
@@ -24,11 +22,11 @@ data class ZcashTransaction(
         val inputData = StringBuilder()
         val outputData = StringBuilder()
 
-        for (input in transactionInputs) {
+        for (input in inputs) {
             inputData.append(input.toString())
         }
 
-        for (output in transactionOutputs) {
+        for (output in outputs) {
             outputData.append(output.toString())
         }
 
@@ -43,7 +41,7 @@ data class ZcashTransaction(
         output.write(nLockTime.toString().toByteArray(StandardCharsets.UTF_8))
 
 
-        return Hex.byteArrayToHexString(BLAKE2B(
+        return org.spongycastle.util.encoders.Hex.toHexString(BLAKE2B(
                 output.toByteArray()
         ))
     }
