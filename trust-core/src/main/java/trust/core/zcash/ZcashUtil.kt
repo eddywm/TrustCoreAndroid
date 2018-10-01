@@ -9,13 +9,10 @@ import org.spongycastle.jce.spec.ECPrivateKeySpec
 import org.spongycastle.util.encoders.Hex
 import org.web3j.crypto.ECKeyPair
 import trust.core.util.Base58Check
-import trust.core.zcash.OpCodes.OP_DUP
-import trust.core.zcash.OpCodes.OP_HASH160
 import java.io.ByteArrayOutputStream
 import java.math.BigInteger
 import java.security.*
 import java.security.spec.X509EncodedKeySpec
-import java.util.*
 
 
 object ZcashUtil {
@@ -63,6 +60,8 @@ object ZcashUtil {
         val pubKey = publicKey.toByteArray()
         val hashedPubKey = Utils.sha256hash160(pubKey)
 
+        Byte
+
         output.write(0x1c)
         output.write(0xb8)
         output.write(hashedPubKey)
@@ -71,8 +70,6 @@ object ZcashUtil {
 
         return Base58Check.bytesToBase58(appended)
     }
-
-
 
 
     /** Given an hex String privateKey [hexPrivateKey] get the [ECPrivateKey] corresponding */
@@ -123,31 +120,6 @@ object ZcashUtil {
             return false
         }
     }
-
-
-    /** This function builds a Pay-to-PublicKey-Hash locking script
-     *  The returned script is a list of instructions that will be executed
-     *  By full nodes once the transaction is relayed to the network.
-     *  Instructions are encoded as hex strings values
-     * */
-    fun buildP2PKHLockingScript(address: String): ArrayList<String> {
-        val lockingScript = ArrayList<String>()
-        lockingScript.add(OP_DUP)
-        lockingScript.add(OP_HASH160)
-        lockingScript.add(address)
-        lockingScript.add(OpCodes.OP_EQUALVERIFY)
-        lockingScript.add(OpCodes.OP_CHECKSIG)
-        return lockingScript
-    }
-
-    /** This function builds a Pay-to-PublicKey-Hash unlocking script script */
-    fun buildP2PKHUnlockingScript(signature: String, publicKey: String): ArrayList<String> {
-        val unlockingScript = ArrayList<String>()
-        unlockingScript.add(signature)
-        unlockingScript.add(publicKey)
-        return unlockingScript
-    }
-
     fun getPublicKeyFromHex(hexPublicKey: String): ECPublicKey {
 
         val encodedPublicKey = Hex.decode(hexPublicKey)
@@ -161,6 +133,57 @@ object ZcashUtil {
         return publicKey as ECPublicKey
     }
 
+
+    fun int64BytesLE(value: Long): ByteArray {
+        val buf = ByteArray(8)
+        buf[0] = (0xff and value.toInt()).toByte()
+        buf[1] = (0xff and ((value shr 8).toInt())).toByte()
+        buf[2] = (0xff and ((value shr 16).toInt())).toByte()
+        buf[3] = (0xff and ((value shr 24).toInt())).toByte()
+        buf[4] = (0xff and ((value shr 32).toInt())).toByte()
+        buf[5] = (0xff and ((value shr 40).toInt())).toByte()
+        buf[6] = (0xff and ((value shr 48).toInt())).toByte()
+        buf[7] = (0xff and ((value shr 56).toInt())).toByte()
+        return buf
+    }
+
+    fun compactSizeIntLE(value: Long): ByteArray {
+        val result: ByteArray
+        when {
+            value < 253 -> {
+                result = ByteArray(1)
+                result[0] = value.toByte()
+            }
+            value < 0x10000 -> {
+                result = ByteArray(3)
+                result[0] = 253.toByte()
+                result[1] = (0xff and value.toInt()).toByte()
+                result[2] = (0xff and ((value shr 8).toInt())).toByte()
+            }
+            value < 0x1000000 -> {
+                result = ByteArray(5)
+                result[0] = 254.toByte()
+                result[1] = (0xff and value.toInt()).toByte()
+                result[2] = (0xff and ((value shr 8).toInt())).toByte()
+                result[3] = (0xff and ((value shr 16).toInt())).toByte()
+                result[4] = (0xff and ((value shr 24).toInt())).toByte()
+            }
+            else -> {
+                result = ByteArray(9)
+                result[0] = 255.toByte()
+                result[1] = (0xff and value.toInt()).toByte()
+                result[2] = (0xff and ((value shr 8).toInt())).toByte()
+                result[3] = (0xff and ((value shr 16).toInt())).toByte()
+                result[4] = (0xff and ((value shr 24).toInt())).toByte()
+                result[5] = (0xff and ((value shr 32).toInt())).toByte()
+                result[6] = (0xff and ((value shr 40).toInt())).toByte()
+                result[7] = (0xff and ((value shr 48).toInt())).toByte()
+                result[8] = (0xff and ((value shr 56).toInt())).toByte()
+            }
+        }
+
+        return result
+    }
 
 
 }

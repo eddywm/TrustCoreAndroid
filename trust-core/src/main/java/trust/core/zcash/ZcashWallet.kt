@@ -58,7 +58,6 @@ class ZcashWallet {
 
         val hashedMessage = Hex.decode(transactionHashData)
 
-
         signature.update(hashedMessage)
 
         val signatureBytes = signature.sign()

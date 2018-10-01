@@ -1,15 +1,15 @@
 package trust.core.zcash
 
 import trust.core.zcash.ZcashUtil.BLAKE2B
+import trust.core.zcash.ZcashUtil.int64BytesLE
 import java.io.ByteArrayOutputStream
-import java.nio.charset.StandardCharsets
 
 data class ZcashTransaction(
         var shielded: Boolean = false,
         var overwintered: Boolean = true,
         var nLockTime: Long = 0L,
-        var inputs: List<TransactionInput> = emptyList(),
-        var outputs: List<TransactionOutput> = emptyList()
+        var inputs: List<ZcashTransactionInput> = emptyList(),
+        var outputs: List<ZcashTransactionOutput> = emptyList()
 
 
 ) {
@@ -19,26 +19,26 @@ data class ZcashTransaction(
     // The resulting hash will be used for signing the transaction before relaying to the network
     // [BLAKE2B] is the standard hash function for Zcash transactions : https://github.com/zcash/zips/blob/master/zip-0243.rst
     fun toHash(): String? {
-        val inputData = StringBuilder()
-        val outputData = StringBuilder()
+        val inputData = ByteArrayOutputStream()
+        val outputData = ByteArrayOutputStream()
 
         for (input in inputs) {
-            inputData.append(input.toString())
+            inputData.write(input.getBytes())
         }
 
         for (output in outputs) {
-            outputData.append(output.toString())
+            outputData.write(output.getBytes())
         }
 
         val output = ByteArrayOutputStream()
 
 
-        val inputByteArray = inputData.toString().toByteArray(StandardCharsets.UTF_8)
-        val outputByteArray = outputData.toString().toByteArray(StandardCharsets.UTF_8)
+        val inputByteArray = inputData.toByteArray()
+        val outputByteArray = outputData.toByteArray()
 
         output.write(inputByteArray)
         output.write(outputByteArray)
-        output.write(nLockTime.toString().toByteArray(StandardCharsets.UTF_8))
+        output.write(int64BytesLE(nLockTime))
 
 
         return org.spongycastle.util.encoders.Hex.toHexString(BLAKE2B(

@@ -10,7 +10,7 @@ import java.util.regex.Pattern
 
 /**
 * The type of Zcash address that this implementation supports are the t type address or vanity address
-* Note : Zcash does not yet support Hierarchical Deterministic Wallet addresses [BIP-32]. https://github.com/zcash/zcash/issues/2673
+* Note : Zcash does not yet support Hierarchical Deterministic Wallet addresses [BIP-32]. [Open Issue] https://github.com/zcash/zcash/issues/2673
 * This implies that the notion of account (as defined in BIP44) and derivation path won't be applied for this Zcash integration
 * E.g: t1ShwyK2o1Pj2qTpz33tqG8aEMszcxxmax8
 */
@@ -26,9 +26,7 @@ open class ZcashAddress : PlainAddress {
         }
     }
 
-
     constructor(value: String) : super(value)
-
     protected constructor(parcel: Parcel) : super(parcel)
 
 
@@ -38,7 +36,6 @@ open class ZcashAddress : PlainAddress {
     }
 
     companion object {
-
         val EMPTY: Address = ZcashAddress("0x0000000000000000000000000000000000000000")
         private val tAddressPattern = Pattern.compile("^t[1-9A-HJ-NP-Za-km-z]{34}")
 
