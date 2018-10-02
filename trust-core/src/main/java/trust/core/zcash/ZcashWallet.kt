@@ -4,7 +4,7 @@ import org.spongycastle.jce.interfaces.ECPrivateKey
 import org.spongycastle.jce.provider.BouncyCastleProvider
 import org.spongycastle.util.encoders.Hex
 import trust.core.zcash.ZcashUtil.ZcashCurve
-import trust.core.zcash.ZcashUtil.getZcashAddressFromPubKeyHex
+import trust.core.zcash.ZcashUtil.getAddressFromPubKey
 import java.security.KeyPairGenerator
 import java.security.SecureRandom
 import java.security.Security
@@ -25,7 +25,7 @@ class ZcashWallet {
         privateKey = keyPair.first
         val pubkey = keyPair.second
         publicKey = pubkey
-        address = getZcashAddressFromPubKeyHex(pubkey)
+        address = getAddressFromPubKey(pubkey)
     }
 
 

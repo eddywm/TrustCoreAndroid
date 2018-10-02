@@ -13,7 +13,6 @@ class ZcashTransactionTests {
     fun transaction_signing_and_verification_test() {
 
         val zcashWallet = ZcashWallet()
-
         val transactionHashData = "4c022acf30183b09d02a56632396c23228b018b65dcaf78be9db3e3c2f27b89d"
 
         val signature = zcashWallet.signTransaction(transactionHashData)
@@ -42,7 +41,6 @@ class ZcashTransactionTests {
                 buildTXO(1800000, "3b82be84abed90d5833f46fedebab6811de08420")
 
         )
-
 
         val transaction = ZcashTransaction(
                 shielded = false,

@@ -54,7 +54,7 @@ object ZcashUtil {
     }
 
 
-    fun getZcashAddressFromPubKeyHex(publicKey: String): String {
+    fun getAddressFromPubKey(publicKey: String): String {
         val output = ByteArrayOutputStream()
 
         val pubKey = publicKey.toByteArray()
@@ -88,13 +88,10 @@ object ZcashUtil {
         return keyFactory.generatePrivate(ecPrivateKeySpec) as ECPrivateKey
     }
 
-
-    /** Signature verification function */
     fun verifySignature(pubKeyHex: String, signatureHexData: String, transactionHashData: String): Boolean {
         try {
 
             val encodedPublicKey = Hex.decode(pubKeyHex)
-
 
             val signature = Hex.decode(signatureHexData)
 
@@ -116,7 +113,7 @@ object ZcashUtil {
             return ecdsa.verify(signature)
 
         } catch (e: Exception) {
-            println("Error : ${e.message}")
+            println("Error during verification: : ${e.message}")
             return false
         }
     }
@@ -134,7 +131,9 @@ object ZcashUtil {
     }
 
 
-    fun int64BytesLittleEndian(value: Long): ByteArray {
+    // Bytes & Bits Manipulation & Layout
+
+    fun int64ToBytesLittleEndian(value: Long): ByteArray {
         val buf = ByteArray(8)
         buf[0] = (0xff and value.toInt()).toByte()
         buf[1] = (0xff and ((value shr 8).toInt())).toByte()
@@ -144,6 +143,15 @@ object ZcashUtil {
         buf[5] = (0xff and ((value shr 40).toInt())).toByte()
         buf[6] = (0xff and ((value shr 48).toInt())).toByte()
         buf[7] = (0xff and ((value shr 56).toInt())).toByte()
+        return buf
+    }
+
+    fun int32ToBytesLittleEndian(value: Long): ByteArray {
+        val buf = ByteArray(4)
+        buf[0] = (0xff and value.toInt()).toByte()
+        buf[1] = (0xff and ((value shr 8).toInt())).toByte()
+        buf[2] = (0xff and ((value shr 16).toInt())).toByte()
+        buf[3] = (0xff and ((value shr 24).toInt())).toByte()
         return buf
     }
 

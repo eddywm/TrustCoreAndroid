@@ -10,7 +10,7 @@ data class ZcashTransactionInput(
         var unlockingScript: List<Byte> = ArrayList<Byte>()
 ) {
     fun getBytes(): ByteArray {
-        return Bytes.concat(ZcashUtil.int64BytesLittleEndian(value), ZcashUtil.compactSizeIntLittleEndian(unlockingScript.size.toLong()), unlockingScript.toByteArray())
+        return Bytes.concat(ZcashUtil.int64ToBytesLittleEndian(value), ZcashUtil.compactSizeIntLittleEndian(unlockingScript.size.toLong()), unlockingScript.toByteArray())
     }
 }
 

@@ -39,7 +39,7 @@ open class ZcashAddress : PlainAddress {
         val EMPTY: Address = ZcashAddress("0x0000000000000000000000000000000000000000")
         private val tAddressPattern = Pattern.compile("^t[1-9A-HJ-NP-Za-km-z]{34}")
 
-        // Valid Zcash t-addresses are 35 length  string
+        // Valid Zcash t-addresses are 35 length Base58 string
         fun isAddress(address: String): Boolean {
             return !TextUtils.isEmpty(address) && address.length == 35 && tAddressPattern.matcher(address).matches()
         }

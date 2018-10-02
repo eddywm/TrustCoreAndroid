@@ -2,7 +2,7 @@ package trust.core.zcash
 
 import com.google.common.primitives.Bytes
 import trust.core.zcash.ZcashUtil.compactSizeIntLittleEndian
-import trust.core.zcash.ZcashUtil.int64BytesLittleEndian
+import trust.core.zcash.ZcashUtil.int64ToBytesLittleEndian
 
 data class ZcashTransactionOutput(
         var value: Long = 0L,
@@ -10,15 +10,15 @@ data class ZcashTransactionOutput(
 ) {
 
     fun getBytes(): ByteArray {
-        return Bytes.concat(int64BytesLittleEndian(value), compactSizeIntLittleEndian(lockingScript.size.toLong()), lockingScript.toByteArray())
+        return Bytes.concat(int64ToBytesLittleEndian(value), compactSizeIntLittleEndian(lockingScript.size.toLong()), lockingScript.toByteArray())
     }
-
 
 }
 
-fun buildTXO(value: Long, publicKeyHash: String) : ZcashTransactionOutput {
+fun buildTXO(amount: Long, publicKeyHash: String) : ZcashTransactionOutput {
     return ZcashTransactionOutput(
-            value = value,
+            value = amount,
+
             /** Builds a Pay-to-PublicKey-Hash locking script
              *  The returned script is a list of instructions that will be executed
              *  By full nodes once the transaction is relayed to the network.
