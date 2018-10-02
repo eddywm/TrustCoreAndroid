@@ -1,7 +1,7 @@
 package trust.core.zcash
 
 import trust.core.zcash.ZcashUtil.BLAKE2B
-import trust.core.zcash.ZcashUtil.int64BytesLE
+import trust.core.zcash.ZcashUtil.int64BytesLittleEndian
 import java.io.ByteArrayOutputStream
 
 data class ZcashTransaction(
@@ -38,7 +38,7 @@ data class ZcashTransaction(
 
         output.write(inputByteArray)
         output.write(outputByteArray)
-        output.write(int64BytesLE(nLockTime))
+        output.write(int64BytesLittleEndian(nLockTime))
 
 
         return org.spongycastle.util.encoders.Hex.toHexString(BLAKE2B(

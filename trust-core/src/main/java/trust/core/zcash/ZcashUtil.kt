@@ -134,7 +134,7 @@ object ZcashUtil {
     }
 
 
-    fun int64BytesLE(value: Long): ByteArray {
+    fun int64BytesLittleEndian(value: Long): ByteArray {
         val buf = ByteArray(8)
         buf[0] = (0xff and value.toInt()).toByte()
         buf[1] = (0xff and ((value shr 8).toInt())).toByte()
@@ -147,7 +147,7 @@ object ZcashUtil {
         return buf
     }
 
-    fun compactSizeIntLE(value: Long): ByteArray {
+    fun compactSizeIntLittleEndian(value: Long): ByteArray {
         val result: ByteArray
         when {
             value < 253 -> {

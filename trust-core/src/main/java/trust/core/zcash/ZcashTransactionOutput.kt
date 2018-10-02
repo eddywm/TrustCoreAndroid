@@ -1,8 +1,8 @@
 package trust.core.zcash
 
 import com.google.common.primitives.Bytes
-import trust.core.zcash.ZcashUtil.compactSizeIntLE
-import trust.core.zcash.ZcashUtil.int64BytesLE
+import trust.core.zcash.ZcashUtil.compactSizeIntLittleEndian
+import trust.core.zcash.ZcashUtil.int64BytesLittleEndian
 
 data class ZcashTransactionOutput(
         var value: Long = 0L,
@@ -10,7 +10,7 @@ data class ZcashTransactionOutput(
 ) {
 
     fun getBytes(): ByteArray {
-        return Bytes.concat(int64BytesLE(value), compactSizeIntLE(lockingScript.size.toLong()), lockingScript.toByteArray())
+        return Bytes.concat(int64BytesLittleEndian(value), compactSizeIntLittleEndian(lockingScript.size.toLong()), lockingScript.toByteArray())
     }
 
 
