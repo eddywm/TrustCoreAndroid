@@ -73,7 +73,7 @@ object ZcashUtil {
     fun getPrivateKeyFromHex(hexPrivateKey: String): ECPrivateKey {
         val params = ECNamedCurveTable.getParameterSpec("secp256k1")
 
-        val keyFactory = KeyFactory.getInstance("EC", "SC")
+        val keyFactory = KeyFactory.getInstance("ECDSA", "SC")
 
         val ecPrivateKeySpec = ECPrivateKeySpec(
                 BigInteger(1, Hex.decode(hexPrivateKey)),

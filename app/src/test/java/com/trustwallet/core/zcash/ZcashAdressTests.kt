@@ -28,7 +28,7 @@ class ZcashAdressTests {
 
         val zcashWallet = ZcashWallet()
 
-        val publicKey = zcashWallet.publicKey!!
+        val publicKey = zcashWallet.publicKeyHex!!
 
         val address = zcashWallet.address
 

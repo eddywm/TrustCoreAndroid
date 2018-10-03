@@ -15,9 +15,9 @@ class ZcashWalletTests {
     fun test_wallet_creation() {
 
         val zcashWallet = ZcashWallet()
-        assertNotNull(zcashWallet.privateKey)
+        assertNotNull(zcashWallet.privateKeyHex)
 
-        val publicKey = zcashWallet.publicKey
+        val publicKey = zcashWallet.publicKeyHex
         assertNotNull(publicKey)
 
         val address = zcashWallet.address

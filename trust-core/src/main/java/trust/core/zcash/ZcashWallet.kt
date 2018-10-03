@@ -12,39 +12,39 @@ import java.security.Signature
 import java.security.spec.ECGenParameterSpec
 
 
-
 class ZcashWallet {
 
-    var privateKey: String? = null
-    var publicKey: String? = null
+    var privateKeyHex: String? = null
+    var publicKeyHex: String? = null
     var address: String? = null
+    var ecPrivateKey: ECPrivateKey? = null
 
     init {
         Security.addProvider(BouncyCastleProvider())
-        val keyPair = generateKeyPair()
-        privateKey = keyPair.first
-        val pubkey = keyPair.second
-        publicKey = pubkey
-        address = getAddressFromPubKey(pubkey)
+        initializeKeys()
     }
 
 
-    private fun generateKeyPair(): Pair<String, String> {
+    private fun initializeKeys() {
 
-        val keyPairGenerator = KeyPairGenerator.getInstance("EC", "SC")
+        val keyPairGenerator = KeyPairGenerator.getInstance("ECDSA", "SC")
+
         val ecGenParameterSpec = ECGenParameterSpec(ZcashCurve)
+
         keyPairGenerator.initialize(ecGenParameterSpec, SecureRandom())
 
         val keyPair = keyPairGenerator.genKeyPair()
-        val privateKey = keyPair.private
 
-        val publicKey = keyPair.public
+        ecPrivateKey = keyPair.private as ECPrivateKey
+
+        privateKeyHex = (keyPair.private as ECPrivateKey).d.toString(16)
 
 
-        return Pair(
-                (privateKey as (ECPrivateKey)).d.toString(16),
-                Hex.toHexString(publicKey.encoded)
-        )
+        publicKeyHex = Hex.toHexString(keyPair.public.encoded)
+
+        address = getAddressFromPubKey(Hex.toHexString(keyPair.public.encoded))
+
+
     }
 
 
@@ -52,9 +52,7 @@ class ZcashWallet {
 
         val signature = Signature.getInstance("ECDSA", "SC")
 
-        val privateKey = ZcashUtil.getPrivateKeyFromHex(this.privateKey!!)
-
-        signature.initSign(privateKey, SecureRandom())
+        signature.initSign(ecPrivateKey, SecureRandom())
 
         val hashedMessage = Hex.decode(transactionHashData)
 
@@ -66,6 +64,6 @@ class ZcashWallet {
     }
 
     override fun toString(): String {
-        return "ZcashWallet(privateKey=$privateKey, publicKey=$publicKey, address=$address)"
+        return "ZcashWallet(privateKeyHex=$privateKeyHex, publicKeyHex=$publicKeyHex, address=$address)"
     }
 }
