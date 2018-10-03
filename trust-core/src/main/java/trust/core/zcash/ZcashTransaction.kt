@@ -62,7 +62,7 @@ data class ZcashTransaction(
                     outputsSerialized,
                     int64ToBytesLittleEndian(out.value),
                     compactSizeIntLittleEndian(out.lockingScript.size.toLong()),
-                    out.lockingScript.toByteArray()
+                    out.lockingScript
             )
         }
 
@@ -75,8 +75,7 @@ data class ZcashTransaction(
                 hashPrevTxOuts,
                 hashSequence,
                 hashOutputs,
-                ByteArray(32), //hashJoinSplits, zeros for us
-                int32ToBytesLittleEndian(nLockTime),
+                ByteArray(32), //hashJoinSplits, zeros for this type of  transparent address transaction
                 int32ToBytesLittleEndian(nExpiryHeight),
                 int32ToBytesLittleEndian(sigHashAll)
         )

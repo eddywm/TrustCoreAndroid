@@ -9,8 +9,9 @@ import org.spongycastle.jce.provider.BouncyCastleProvider
 import org.spongycastle.jce.spec.ECPrivateKeySpec
 import org.spongycastle.util.encoders.Hex
 import org.web3j.crypto.ECKeyPair
-import trust.core.util.Base58Check
+import org.web3j.crypto.Hash.sha256
 import java.io.ByteArrayOutputStream
+import java.io.IOException
 import java.math.BigInteger
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -18,15 +19,19 @@ import java.security.KeyFactory
 import java.security.Security
 import java.security.Signature
 import java.security.spec.X509EncodedKeySpec
+import java.util.*
 
-// This class defines utility functions and properties used in the Zcash integration
-
+// This class defines utility functions and constants used in this Zcash integration
 object ZcashUtil {
 
     init {
         Security.addProvider(BouncyCastleProvider())
     }
     const val ZcashCurve = "secp256k1"
+
+    val ALPHABET = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"  // Everything except 0OIl : BASE58 Standard characters
+    private val ALPHABET_SIZE = BigInteger.valueOf(ALPHABET.length.toLong())
+
 
     /*
     Address format : P2PKH Zcash t-address.
@@ -45,7 +50,7 @@ object ZcashUtil {
 
         val appended = output.toByteArray()
 
-        return Base58Check.bytesToBase58(appended)
+        return bytesToBase58(appended)
     }
 
 
@@ -61,7 +66,7 @@ object ZcashUtil {
 
         val appended = output.toByteArray()
 
-        return Base58Check.bytesToBase58(appended)
+        return bytesToBase58(appended)
     }
 
 
@@ -120,7 +125,53 @@ object ZcashUtil {
     }
 
 
-    // Bytes & Bits Manipulation & Layout
+    // BASE58 Utilities
+
+    // Adds the checksum and converts to Base58Check.
+    private fun bytesToBase58(data: ByteArray): String {
+        return rawBytesToBase58(addCheckHash(data))
+    }
+
+
+    // Directly converts to Base58Check without adding a checksum.
+    private fun rawBytesToBase58(data: ByteArray): String {
+        // Convert to base-58 string
+        val sb = StringBuilder()
+        var num = BigInteger(1, data)
+        while (num.signum() != 0) {
+            val quotrem = num.divideAndRemainder(ALPHABET_SIZE)
+            sb.append(ALPHABET[quotrem[1].toInt()])
+            num = quotrem[0]
+        }
+
+        // Add '1' characters for leading 0-value bytes
+        var i = 0
+        while (i < data.size && data[i].toInt() == 0) {
+            sb.append(ALPHABET[0])
+            i++
+        }
+        return sb.reverse().toString()
+    }
+
+
+    // Returns a new byte array by concatenating the given array with its checksum.
+     fun addCheckHash(data: ByteArray): ByteArray {
+        try {
+            val hash = Arrays.copyOf(sha256(sha256(data)), 4)
+            val buf = ByteArrayOutputStream()
+            buf.write(data)
+            buf.write(hash)
+            return buf.toByteArray()
+        } catch (e: IOException) {
+            throw AssertionError(e)
+        }
+
+    }
+
+
+
+
+    // Bytes & Bits Manipulation, Serialization, Layout
 
     fun int64ToBytesLittleEndian(value: Long): ByteArray {
         val byteBuffer = ByteBuffer.allocate(8)

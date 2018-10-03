@@ -30,7 +30,7 @@ open class ZcashAddress : PlainAddress {
     protected constructor(parcel: Parcel) : super(parcel)
 
 
-    // Zcash does not use 0x type addresses
+    // 0x type addresses not relevant in the Zcash context
     override fun hexValue(): String? {
         return null
     }
