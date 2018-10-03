@@ -11,6 +11,8 @@ import org.web3j.crypto.ECKeyPair
 import trust.core.util.Base58Check
 import java.io.ByteArrayOutputStream
 import java.math.BigInteger
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
 import java.security.*
 import java.security.spec.X509EncodedKeySpec
 
@@ -60,8 +62,6 @@ object ZcashUtil {
         val pubKey = publicKey.toByteArray()
         val hashedPubKey = Utils.sha256hash160(pubKey)
 
-        Byte
-
         output.write(0x1c)
         output.write(0xb8)
         output.write(hashedPubKey)
@@ -72,7 +72,6 @@ object ZcashUtil {
     }
 
 
-    /** Given an hex String privateKey [hexPrivateKey] get the [ECPrivateKey] corresponding */
     fun getPrivateKeyFromHex(hexPrivateKey: String): ECPrivateKey {
         val params = ECNamedCurveTable.getParameterSpec("secp256k1")
 
@@ -82,9 +81,6 @@ object ZcashUtil {
                 BigInteger(1, Hex.decode(hexPrivateKey)),
                 params
         )
-
-
-
         return keyFactory.generatePrivate(ecPrivateKeySpec) as ECPrivateKey
     }
 
@@ -134,25 +130,17 @@ object ZcashUtil {
     // Bytes & Bits Manipulation & Layout
 
     fun int64ToBytesLittleEndian(value: Long): ByteArray {
-        val buf = ByteArray(8)
-        buf[0] = (0xff and value.toInt()).toByte()
-        buf[1] = (0xff and ((value shr 8).toInt())).toByte()
-        buf[2] = (0xff and ((value shr 16).toInt())).toByte()
-        buf[3] = (0xff and ((value shr 24).toInt())).toByte()
-        buf[4] = (0xff and ((value shr 32).toInt())).toByte()
-        buf[5] = (0xff and ((value shr 40).toInt())).toByte()
-        buf[6] = (0xff and ((value shr 48).toInt())).toByte()
-        buf[7] = (0xff and ((value shr 56).toInt())).toByte()
-        return buf
+        val byteBuffer = ByteBuffer.allocate(8)
+        byteBuffer.order(ByteOrder.LITTLE_ENDIAN)
+        byteBuffer.putLong(value)
+        return byteBuffer.array()
     }
 
-    fun int32ToBytesLittleEndian(value: Long): ByteArray {
-        val buf = ByteArray(4)
-        buf[0] = (0xff and value.toInt()).toByte()
-        buf[1] = (0xff and ((value shr 8).toInt())).toByte()
-        buf[2] = (0xff and ((value shr 16).toInt())).toByte()
-        buf[3] = (0xff and ((value shr 24).toInt())).toByte()
-        return buf
+    fun int32ToBytesLittleEndian(value: Int): ByteArray {
+        val byteBuffer = ByteBuffer.allocate(4)
+        byteBuffer.order(ByteOrder.LITTLE_ENDIAN)
+        byteBuffer.putInt(value)
+        return byteBuffer.array()
     }
 
     fun compactSizeIntLittleEndian(value: Long): ByteArray {

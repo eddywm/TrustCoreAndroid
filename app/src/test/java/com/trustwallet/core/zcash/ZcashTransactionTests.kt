@@ -18,7 +18,6 @@ class ZcashTransactionTests {
         val signature = zcashWallet.signTransaction(transactionHashData)
         assertNotNull(signature)
 
-
         val signatureVerification = ZcashUtil.verifySignature(
                 pubKeyHex = zcashWallet.publicKey!!,
                 signatureHexData = signature,
@@ -44,17 +43,16 @@ class ZcashTransactionTests {
 
         val transaction = ZcashTransaction(
                 shielded = false,
-                nLockTime = 0L,
+                nLockTime = 0,
                 inputs = txInputs,
                 outputs = txOutputs
         )
 
-        val txHashData = transaction.toHash()
-
+        val txHashData = transaction.getHashDataForSign()
 
         val zcashWallet = ZcashWallet()
 
-        val signature = zcashWallet.signTransaction(txHashData!!)
+        val signature = zcashWallet.signTransaction(txHashData)
         assertNotNull(signature)
 
 
