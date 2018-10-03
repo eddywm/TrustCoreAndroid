@@ -1,11 +1,13 @@
 package trust.core.zcash
 
 import com.google.common.primitives.Bytes
-import trust.core.util.Hex
+import org.spongycastle.util.encoders.Hex
 
 
+@Suppress("ArrayInDataClass")
 data class ZcashTransactionInput(
-        var index: Long = 0,
+        var txid: ByteArray = ByteArray(32),
+        var index: Int = 0,
         var value: Long = 0L,
         var sequence: Int = -0x1,
         var unlockingScript: List<Byte> = ArrayList()
@@ -21,7 +23,7 @@ fun buildTXIn(value: Long, signature: String, publicKeyHex: String): ZcashTransa
             /** Builds a Pay-to-PublicKey-Hash unlocking script script
              *  <SIGNATURE>  <PUBKEYHASH>
              * */
-            unlockingScript = Bytes.concat(Hex.hexStringToByteArray(signature), org.spongycastle.util.encoders.Hex.decode(publicKeyHex)).toList()
+            unlockingScript = Bytes.concat(Hex.decode(signature), Hex.decode(publicKeyHex)).toList()
 
     )
 }

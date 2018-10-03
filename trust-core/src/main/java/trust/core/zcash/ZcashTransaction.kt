@@ -1,12 +1,15 @@
 package trust.core.zcash
 
-import trust.core.zcash.ZcashUtil.BLAKE2B
+import com.google.common.primitives.Bytes
+import org.spongycastle.crypto.digests.Blake2bDigest
+import org.spongycastle.util.encoders.Hex
+import trust.core.zcash.ZcashUtil.compactSizeIntLittleEndian
 import trust.core.zcash.ZcashUtil.int32ToBytesLittleEndian
-import java.io.ByteArrayOutputStream
+import trust.core.zcash.ZcashUtil.int64ToBytesLittleEndian
 
 data class ZcashTransaction(
         var header: Int = -0x7ffffffd,
-        var versionGroupId : Int = 0x03C48270,  // VERSION_BRANCH_ID_OVERWINTER
+        var versionGroupId: Int = 0x03C48270,  // VERSION_BRANCH_ID_OVERWINTER
         var nExpiryHeight: Int = 0,
         var sigHashAll: Int = 1,
         var shielded: Boolean = false,
@@ -19,38 +22,75 @@ data class ZcashTransaction(
 ) {
 
     /**
-    * Concatenate all transaction properties, inputs and outputs byte array data in respect to ZIP 0243
-    * Apply the [BLAKE2B] hash function on the combined data
-    * The resulting hash will be used for signing the transaction before relaying to the network
-    * [BLAKE2B] is the standard hash function for Zcash transactions : https://github.com/zcash/zips/blob/master/zip-0243.rst
-    */
+     * Concatenate all transaction properties, inputs and outputs byte array data in respect to ZIP 0243
+     * Apply the `BLAKE2B` hash function on the specified data in the ZIP spec
+     * The resulting hash will be used for signing the transaction before relaying to the network
+     * `BLAKE2B]` is the standard hash function for Zcash transactions : https://github.com/zcash/zips/blob/master/zip-0243.rst
+     */
+
     fun getHashDataForSign(): String {
-        val inputData = ByteArrayOutputStream()
-        val outputData = ByteArrayOutputStream()
+        val hashPrevTxOuts = ByteArray(32)
+        val hashSequence = ByteArray(32)
+        val hashOutputs = ByteArray(32)
 
-        for (input in inputs) inputData.write(input.getBytes())
+        val prevTxOutsDigest = Blake2bDigest(null, 32, null, ZCASH_PREVOUTS_HASH_PERSONALIZATION)
+        var prevTxOutsSerialized = ByteArray(0)
+        
+        for (i in inputs.indices) {
+            val input = inputs[i]
+            prevTxOutsSerialized = Bytes.concat(prevTxOutsSerialized, input.txid, int32ToBytesLittleEndian(input.index))
+        }
 
-        for (output in outputs) outputData.write(output.getBytes())
+        prevTxOutsDigest.update(prevTxOutsSerialized, 0, prevTxOutsSerialized.size)
+        prevTxOutsDigest.doFinal(hashPrevTxOuts, 0)
 
-        val output = ByteArrayOutputStream()
+        val sequenceDigest = Blake2bDigest(null, 32, null, ZCASH_SEQUENCE_HASH_PERSONALIZATION)
 
-        val inputByteArray = inputData.toByteArray()
-        val outputByteArray = outputData.toByteArray()
+        var sequence_ser = ByteArray(0)
+        for (i in inputs.indices) {
+            sequence_ser = Bytes.concat(sequence_ser, int32ToBytesLittleEndian(inputs[i].sequence))
+        }
 
-        output.write(int32ToBytesLittleEndian(header))
-        output.write(int32ToBytesLittleEndian(versionGroupId))
-        output.write(inputByteArray)
-        output.write(outputByteArray)
-        output.write(ByteArray(32)) //hashJoinSplits, zeros for this type of transaction
-        output.write(int32ToBytesLittleEndian(nLockTime))
-        output.write(int32ToBytesLittleEndian(nExpiryHeight))
-        output.write(int32ToBytesLittleEndian(sigHashAll))
+        sequenceDigest.update(sequence_ser, 0, sequence_ser.size)
+        sequenceDigest.doFinal(hashSequence, 0)
+
+        val outputsDigest = Blake2bDigest(null, 32, null, ZCASH_OUTPUTS_HASH_PERSONALIZATION)
+        var outputsSerialized = ByteArray(0)
+        for (i in outputs.indices) {
+            val out = outputs[i]
+            outputsSerialized = Bytes.concat(
+                    outputsSerialized,
+                    int64ToBytesLittleEndian(out.value),
+                    compactSizeIntLittleEndian(out.lockingScript.size.toLong()),
+                    out.lockingScript.toByteArray()
+            )
+        }
+
+        outputsDigest.update(outputsSerialized, 0, outputsSerialized.size)
+        outputsDigest.doFinal(hashOutputs, 0)
+
+        val txSignatureBytes = Bytes.concat(
+                int32ToBytesLittleEndian(header),
+                int32ToBytesLittleEndian(versionGroupId),
+                hashPrevTxOuts,
+                hashSequence,
+                hashOutputs,
+                ByteArray(32), //hashJoinSplits, zeros for us
+                int32ToBytesLittleEndian(nLockTime),
+                int32ToBytesLittleEndian(nExpiryHeight),
+                int32ToBytesLittleEndian(sigHashAll)
+        )
+
+        return Hex.toHexString(txSignatureBytes)!!
 
 
-        return org.spongycastle.util.encoders.Hex.toHexString(BLAKE2B(
-                output.toByteArray()
-        ))
     }
 
 
+    companion object {
+        private val ZCASH_SEQUENCE_HASH_PERSONALIZATION = byteArrayOf('Z'.toByte(), 'c'.toByte(), 'a'.toByte(), 's'.toByte(), 'h'.toByte(), 'S'.toByte(), 'e'.toByte(), 'q'.toByte(), 'u'.toByte(), 'e'.toByte(), 'n'.toByte(), 'c'.toByte(), 'H'.toByte(), 'a'.toByte(), 's'.toByte(), 'h'.toByte()) //ZcashSequencHash
+        private val ZCASH_OUTPUTS_HASH_PERSONALIZATION = byteArrayOf('Z'.toByte(), 'c'.toByte(), 'a'.toByte(), 's'.toByte(), 'h'.toByte(), 'O'.toByte(), 'u'.toByte(), 't'.toByte(), 'p'.toByte(), 'u'.toByte(), 't'.toByte(), 's'.toByte(), 'H'.toByte(), 'a'.toByte(), 's'.toByte(), 'h'.toByte())  //ZcashOutputsHash
+        private val ZCASH_PREVOUTS_HASH_PERSONALIZATION = byteArrayOf('Z'.toByte(), 'c'.toByte(), 'a'.toByte(), 's'.toByte(), 'h'.toByte(), 'P'.toByte(), 'r'.toByte(), 'e'.toByte(), 'v'.toByte(), 'o'.toByte(), 'u'.toByte(), 't'.toByte(), 'H'.toByte(), 'a'.toByte(), 's'.toByte(), 'h'.toByte()) //ZcashPrevoutHash
+
+    }
 }

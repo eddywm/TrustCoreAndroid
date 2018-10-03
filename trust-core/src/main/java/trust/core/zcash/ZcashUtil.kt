@@ -1,6 +1,7 @@
 package trust.core.zcash
 
 import org.bitcoinj.core.Utils
+import org.bitcoinj.core.Utils.sha256hash160
 import org.spongycastle.jce.ECNamedCurveTable
 import org.spongycastle.jce.interfaces.ECPrivateKey
 import org.spongycastle.jce.interfaces.ECPublicKey
@@ -13,27 +14,19 @@ import java.io.ByteArrayOutputStream
 import java.math.BigInteger
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
-import java.security.*
+import java.security.KeyFactory
+import java.security.Security
+import java.security.Signature
 import java.security.spec.X509EncodedKeySpec
 
+// This class defines utility functions and properties used in the Zcash integration
 
 object ZcashUtil {
 
     init {
         Security.addProvider(BouncyCastleProvider())
     }
-
     const val ZcashCurve = "secp256k1"
-
-    fun BLAKE2B(input: ByteArray): ByteArray {
-        try {
-            val digest = MessageDigest.getInstance("BLAKE2B-256")
-            return digest.digest(input)
-        } catch (e: NoSuchAlgorithmException) {
-            throw RuntimeException("Couldn't find a BLAKE2B-256 provider", e)
-        }
-
-    }
 
     /*
     Address format : P2PKH Zcash t-address.
@@ -44,7 +37,7 @@ object ZcashUtil {
         val output = ByteArrayOutputStream()
 
         val pubKey = keyChain.publicKey.toByteArray()
-        val hashedPubKey = Utils.sha256hash160(pubKey)
+        val hashedPubKey = sha256hash160(pubKey)
 
         output.write(0x1c)
         output.write(0xb8)

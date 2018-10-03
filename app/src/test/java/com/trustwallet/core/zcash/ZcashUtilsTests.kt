@@ -12,14 +12,13 @@ class ZcashUtilsTests {
     fun test_int32toLittleEndianByteArray_conversion () {
 
         val number = "00040000"
-        var numberLE = int32ToBytesLittleEndian(1024)
+        val numberLEBytes = int32ToBytesLittleEndian(1024)
 
-        val numberLEHex = Hex.toHexString(numberLE)
+        val numberLEHex = Hex.toHexString(numberLEBytes)
         assertEquals(
                 number,
                 numberLEHex
         )
-
 
     }
 
@@ -27,15 +26,14 @@ class ZcashUtilsTests {
     @Test
     fun test_int64toLittleEndianByteArray_conversion () {
 
-        val number = "0004000000000000"
-        var numberLE = int64ToBytesLittleEndian(1024L)
+        val number = "0008000000000000"
+        val numberLEBytes = int64ToBytesLittleEndian(2048L)
 
-        val numberLEHex = Hex.toHexString(numberLE)
+        val numberLEHex = Hex.toHexString(numberLEBytes)
         assertEquals(
                 number,
                 numberLEHex
         )
-
 
     }
 

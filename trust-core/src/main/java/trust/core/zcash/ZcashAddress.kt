@@ -9,10 +9,10 @@ import java.util.regex.Pattern
 
 
 /**
-* The type of Zcash address that this implementation supports are the t type address or vanity address
-* Note : Zcash does not yet support Hierarchical Deterministic Wallet addresses [BIP-32]. [Open Issue] https://github.com/zcash/zcash/issues/2673
+* The type of Zcash address that this implementation supports is the `t type` address or transparent address
+* Note : Zcash does not yet have a ZIP for Hierarchical Deterministic Wallet addresses. [Open Issue] https://github.com/zcash/zcash/issues/2673
 * This implies that the notion of account (as defined in BIP44) and derivation path won't be applied for this Zcash integration
-* E.g: t1ShwyK2o1Pj2qTpz33tqG8aEMszcxxmax8
+* Type of Zcash address supported : t1ShwyK2o1Pj2qTpz33tqG8aEMszcxxmax8
 */
 open class ZcashAddress : PlainAddress {
 
