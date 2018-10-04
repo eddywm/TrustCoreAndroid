@@ -19,6 +19,7 @@ class ZcashWallet {
     var address: String? = null
     var ecPrivateKey: ECPrivateKey? = null
 
+
     init {
         Security.addProvider(BouncyCastleProvider())
         initializeKeys()
@@ -44,7 +45,6 @@ class ZcashWallet {
 
         address = getAddressFromPubKey(Hex.toHexString(keyPair.public.encoded))
 
-
     }
 
 
@@ -63,7 +63,4 @@ class ZcashWallet {
         return Hex.toHexString(signatureBytes)
     }
 
-    override fun toString(): String {
-        return "ZcashWallet(privateKeyHex=$privateKeyHex, publicKeyHex=$publicKeyHex, address=$address)"
-    }
 }

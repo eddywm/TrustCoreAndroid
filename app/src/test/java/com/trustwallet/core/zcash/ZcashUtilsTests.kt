@@ -41,10 +41,10 @@ class ZcashUtilsTests {
     @Test
     fun test_compactInSize () {
 
-        val number = 16L
+        val number = 17L
         val compactedLEBytes = compactSizeIntLittleEndian(number)
 
-        assertEquals("10", Hex.toHexString(compactedLEBytes) )
+        assertEquals("11", Hex.toHexString(compactedLEBytes) )
 
     }
 

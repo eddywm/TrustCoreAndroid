@@ -111,6 +111,7 @@ object ZcashUtil {
             return false
         }
     }
+
     fun getPublicKeyFromHex(hexPublicKey: String): ECPublicKey {
 
         val encodedPublicKey = Hex.decode(hexPublicKey)

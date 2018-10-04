@@ -16,10 +16,10 @@ class ZcashAdressTests {
         assertEquals(true, isValidAddress)
 
 
-        val wrongAddress = "t1ShwyK2o1Pj2qTpz33tqG8aEMszcxxmax8yhd"
-        val isValidZcashAddress = ZcashAddress.isAddress(wrongAddress)
+        val wrongAddress = "yt6yShwyK2o1Pj2qTpz33tqG8aEMszcxxmax8yhd"
+        val addressIsNotValid = ZcashAddress.isAddress(wrongAddress)
 
-        assertEquals(false, isValidZcashAddress)
+        assertEquals(false, addressIsNotValid)
 
     }
 

@@ -17,9 +17,12 @@ data class ZcashTransactionInput(
 fun buildTXIn(value: Long, signature: String, publicKeyHex: String): ZcashTransactionInput {
     return ZcashTransactionInput(
             value = value,
-            /** Builds a Pay-to-PublicKey-Hash unlocking script script
+
+            /**
+             *  Builds a Pay-to-PublicKey-Hash unlocking script
              *  <SIGNATURE>  <PUBKEYHASH>
-             * */
+             *
+             */
             unlockingScript = Bytes.concat(Hex.decode(signature), Hex.decode(publicKeyHex))
 
     )

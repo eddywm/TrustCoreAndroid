@@ -2,6 +2,7 @@ package trust.core.zcash
 
 import com.google.common.primitives.Bytes
 import org.spongycastle.util.encoders.Hex
+
 @Suppress("ArrayInDataClass")
 
 
@@ -9,7 +10,7 @@ data class ZcashTransactionOutput(
         var value: Long = 0L,
         var lockingScript: ByteArray = ByteArray(32)
 )
-fun buildTXO(amount: Long, publicKeyHash: String) : ZcashTransactionOutput {
+fun buildTXO(amount: Long, publicKeyHash: String): ZcashTransactionOutput {
     return ZcashTransactionOutput(
             value = amount,
 
@@ -17,7 +18,7 @@ fun buildTXO(amount: Long, publicKeyHash: String) : ZcashTransactionOutput {
              *  Builds a Pay-to-PublicKey-Hash locking script
              *  The returned script is a series of instructions that will be executed
              *  By full nodes once the transaction is relayed to the network.
-             *  Instructions are encoded as byte values with specific opcode meaning
+             *  Instructions are encoded as byte values with specific opcode meaning.
              *
              *   OP_DUP      OP_HASH160     <PubkeyHash>    OP_EQUALVERIFY   OP_CHECKSIG
              *

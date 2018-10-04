@@ -10,6 +10,7 @@ import trust.core.zcash.ZcashUtil.int64ToBytesLittleEndian
 data class ZcashTransaction(
         var header: Int = -0x7ffffffd,
         var versionGroupId: Int = 0x03C48270,  // VERSION_BRANCH_ID_OVERWINTER
+        var consensusBranchId: Int  = 0x5ba81b19,
         var nExpiryHeight: Int = 0,
         var sigHashAll: Int = 1,
         var shielded: Boolean = false,
@@ -28,14 +29,22 @@ data class ZcashTransaction(
      * `BLAKE2B]` is the standard hash function for Zcash transactions : https://github.com/zcash/zips/blob/master/zip-0243.rst
      */
 
+
     fun getHashDataForSign(): String {
+        val txSignatureBytes = computeSigBytes()
+        return Hex.toHexString(txSignatureBytes)!!
+
+
+    }
+
+    private fun computeSigBytes(): ByteArray? {
         val hashPrevTxOuts = ByteArray(32)
         val hashSequence = ByteArray(32)
         val hashOutputs = ByteArray(32)
 
         val prevTxOutsDigest = Blake2bDigest(null, 32, null, ZCASH_PREVOUTS_HASH_PERSONALIZATION)
         var prevTxOutsSerialized = ByteArray(0)
-        
+
         for (i in inputs.indices) {
             val input = inputs[i]
             prevTxOutsSerialized = Bytes.concat(prevTxOutsSerialized, input.txid, int32ToBytesLittleEndian(input.index))
@@ -69,7 +78,7 @@ data class ZcashTransaction(
         outputsDigest.update(outputsSerialized, 0, outputsSerialized.size)
         outputsDigest.doFinal(hashOutputs, 0)
 
-        val txSignatureBytes = Bytes.concat(
+        return Bytes.concat(
                 int32ToBytesLittleEndian(header),
                 int32ToBytesLittleEndian(versionGroupId),
                 hashPrevTxOuts,
@@ -79,10 +88,6 @@ data class ZcashTransaction(
                 int32ToBytesLittleEndian(nExpiryHeight),
                 int32ToBytesLittleEndian(sigHashAll)
         )
-
-        return Hex.toHexString(txSignatureBytes)!!
-
-
     }
 
 
