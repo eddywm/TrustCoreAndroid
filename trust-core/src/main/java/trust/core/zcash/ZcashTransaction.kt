@@ -23,10 +23,11 @@ data class ZcashTransaction(
 ) {
 
     /**
-     * Concatenate all transaction properties, inputs and outputs byte array data in respect to ZIP 0243
+     * Concatenate all transaction properties, inputs and outputs byte array data in respect to ZIP 0143
      * Apply the `BLAKE2B` hash function on the specified data in the ZIP spec
-     * The resulting hash will be used for signing the transaction before relaying to the network
-     * `BLAKE2B]` is the standard hash function for Zcash transactions : https://github.com/zcash/zips/blob/master/zip-0243.rst
+     * The resulting hash will be used for signing the transaction before relaying to the network.
+     *
+     * `BLAKE2B` is the standard hash function for Zcash transactions : https://github.com/zcash/zips/blob/master/zip-0143.rst
      */
 
 
@@ -55,16 +56,18 @@ data class ZcashTransaction(
 
         val sequenceDigest = Blake2bDigest(null, 32, null, ZCASH_SEQUENCE_HASH_PERSONALIZATION)
 
-        var sequence_ser = ByteArray(0)
+        var sequenceSerialization = ByteArray(0)
+
         for (i in inputs.indices) {
-            sequence_ser = Bytes.concat(sequence_ser, int32ToBytesLittleEndian(inputs[i].sequence))
+            sequenceSerialization = Bytes.concat(sequenceSerialization, int32ToBytesLittleEndian(inputs[i].sequence))
         }
 
-        sequenceDigest.update(sequence_ser, 0, sequence_ser.size)
+        sequenceDigest.update(sequenceSerialization, 0, sequenceSerialization.size)
         sequenceDigest.doFinal(hashSequence, 0)
 
         val outputsDigest = Blake2bDigest(null, 32, null, ZCASH_OUTPUTS_HASH_PERSONALIZATION)
         var outputsSerialized = ByteArray(0)
+
         for (i in outputs.indices) {
             val out = outputs[i]
             outputsSerialized = Bytes.concat(
