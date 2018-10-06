@@ -8,7 +8,11 @@ import trust.core.zcash.ZcashUtil.int32ToBytesLittleEndian
 import trust.core.zcash.ZcashUtil.int64ToBytesLittleEndian
 
 data class ZcashTransaction(
-        var header: Int = -0x7ffffffd,
+
+        // https://github.com/zcash/zips/blob/master/zip-0202.rst#transaction-format-version-3
+        // Tx header: 0x80000003 : 10000000000000000000000000000011 : First bit (Overwinter flag, 2 last bits 11(3) == version)
+
+        var header: Long = 0x80000003,
         var versionGroupId: Int = 0x03C48270,  // VERSION_BRANCH_ID_OVERWINTER
         var consensusBranchId: Int  = 0x5ba81b19,
         var nExpiryHeight: Int = 0,
@@ -82,7 +86,7 @@ data class ZcashTransaction(
         outputsDigest.doFinal(hashOutputs, 0)
 
         return Bytes.concat(
-                int32ToBytesLittleEndian(header),
+                int32ToBytesLittleEndian(header.toInt()),
                 int32ToBytesLittleEndian(versionGroupId),
                 hashPrevTxOuts,
                 hashSequence,
